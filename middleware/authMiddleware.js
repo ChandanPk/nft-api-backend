@@ -1,22 +1,24 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const requireAuth = (req, res, next) => {
-  const token = req.cookies.jwt;
+const requireAuth = (req, res) => {
+  // console.log("Checking beta..")
+  const token = req.body.token;
 
   // check json web token exists & is verified
   if (token) {
     jwt.verify(token, 'net ninja secret', (err, decodedToken) => {
       if (err) {
         console.log(err.message);
-        res.redirect('/login');
+        res.status(400).json({status: "bad auth"});
       } else {
-        console.log(decodedToken);
-        next();
+        // console.log(decodedToken);
+        res.status(200).json({status: "good auth", decodedToken})
+        // next();
       }
     });
   } else {
-    res.redirect('/login');
+    res.status(400).json({status: "bad auth"});
   }
 };
 
